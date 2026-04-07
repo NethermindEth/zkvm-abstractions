@@ -15,16 +15,38 @@ public static partial class Accelerators
         ZKVM_EFAIL = -1
     }
 
-    //private unsafe struct zkvm_bytes_32
-    //{
-    //    public fixed byte data[32];
-    //}
-
     [LibraryImport("__Internal")]
     private static partial zkvm_status zkvm_keccak256(ReadOnlySpan<byte> data, nuint len, Span<byte> output);
 
     [LibraryImport("__Internal")]
+    private static partial zkvm_status zkvm_modexp(
+        ReadOnlySpan<byte> @base,
+        nuint base_len,
+        ReadOnlySpan<byte> exp,
+        nuint exp_len,
+        ReadOnlySpan<byte> modulus,
+        nuint mod_len,
+        Span<byte> output
+    );
+
+    [LibraryImport("__Internal")]
     private static partial zkvm_status zkvm_ripemd160(ReadOnlySpan<byte> data, nuint len, Span<byte> output);
+
+    [LibraryImport("__Internal")]
+    private static partial zkvm_status zkvm_secp256k1_ecrecover(
+        ReadOnlySpan<byte> msg,
+        ReadOnlySpan<byte> sig,
+        byte recid,
+        Span<byte> output
+    );
+
+    [LibraryImport("__Internal")]
+    private static partial zkvm_status zkvm_secp256k1_verify(
+        ReadOnlySpan<byte> msg,
+        ReadOnlySpan<byte> sig,
+        ReadOnlySpan<byte> pubkey,
+        [MarshalAs(UnmanagedType.U1)] ref bool verified
+    );
 
     [LibraryImport("__Internal")]
     private static partial zkvm_status zkvm_sha256(ReadOnlySpan<byte> data, nuint len, Span<byte> output);
