@@ -16,6 +16,15 @@ public static partial class Accelerators
     }
 
     [LibraryImport("__Internal")]
+    private static partial zkvm_status zkvm_blake2f(
+        uint rounds,
+        Span<byte> h,
+        ReadOnlySpan<byte> m,
+        ReadOnlySpan<byte> t,
+        byte f
+    );
+
+    [LibraryImport("__Internal")]
     private static partial zkvm_status zkvm_bn254_g1_add(
         ReadOnlySpan<byte> p1,
         ReadOnlySpan<byte> p2,

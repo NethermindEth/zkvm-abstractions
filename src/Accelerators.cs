@@ -13,6 +13,34 @@ namespace Nethermind.Zkvm.Abstractions;
 public static partial class Accelerators
 {
     /// <summary>
+    /// Performs the BLAKE2f compression.
+    /// </summary>
+    /// <param name="rounds">The number of rounds.</param>
+    /// <param name="state">The state vector.</param>
+    /// <param name="message">The message block.</param>
+    /// <param name="offset">The offset counters.</param>
+    /// <param name="finalBlock">The final block indicator.</param>
+    /// <exception cref="ArgumentOutOfRangeException"><c>state</c> buffer must be 64 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><c>message</c> buffer must be 128 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><c>offset</c> buffer must be 16 bytes long.</exception>
+    /// <exception cref="CryptographicException">Operation failed.</exception>
+    public static void Blake2F(
+        uint rounds,
+        Span<byte> state,
+        ReadOnlySpan<byte> message,
+        ReadOnlySpan<byte> offset,
+        byte finalBlock)
+    {
+        ArgumentOutOfRangeException.ThrowIfNotEqual(state.Length, 64, nameof(state));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(message.Length, 128, nameof(message));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(offset.Length, 16, nameof(offset));
+
+        zkvm_status status = zkvm_blake2f(rounds, state, message, offset, finalBlock);
+
+        ThrowIfFailed(status, nameof(zkvm_blake2f));
+    }
+
+    /// <summary>
     /// Performs BN254 G1 point addition.
     /// </summary>
     /// <param name="p1">The first point <c>(x || y)</c>.</param>
@@ -66,7 +94,7 @@ public static partial class Accelerators
     /// <param name="pairs">The array of G1-G2 point pairs.</param>
     /// <param name="numPairs">The number of point pairs.</param>
     /// <returns><c>true</c> if the pairing equation holds; otherwise, <c>false</c>.</returns>
-    /// <exception cref="ArgumentOutOfRangeException"><c>pair</c> buffer length is invalid.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><c>pairs</c> buffer must be <c>192 * numPairs</c> bytes long.</exception>
     /// <exception cref="CryptographicException">Operation failed.</exception>
     public static bool BN254Pairing(ReadOnlySpan<byte> pairs, nuint numPairs)
     {
