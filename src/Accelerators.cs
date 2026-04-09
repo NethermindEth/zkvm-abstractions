@@ -13,6 +13,75 @@ namespace Nethermind.Zkvm.Abstractions;
 public static partial class Accelerators
 {
     /// <summary>
+    /// Performs BN254 G1 point addition.
+    /// </summary>
+    /// <param name="p1">The first point <c>(x || y)</c>.</param>
+    /// <param name="p2">The second point <c>(x || y)</c>.</param>
+    /// <param name="result">The resulting point <c>(x || y)</c>.</param>
+    /// <exception cref="ArgumentOutOfRangeException"><c>p1</c> buffer must be 64 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><c>p2</c> buffer must be 64 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><c>result</c> buffer must be 64 bytes long.</exception>
+    /// <exception cref="CryptographicException">Operation failed.</exception>
+    public static void BN254G1Add(
+        ReadOnlySpan<byte> p1,
+        ReadOnlySpan<byte> p2,
+        Span<byte> result)
+    {
+        ArgumentOutOfRangeException.ThrowIfNotEqual(p1.Length, 64, nameof(p1));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(p2.Length, 64, nameof(p2));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(result.Length, 64, nameof(result));
+
+        zkvm_status status = zkvm_bn254_g1_add(p1, p2, result);
+
+        ThrowIfFailed(status, nameof(zkvm_bn254_g1_add));
+    }
+
+    /// <summary>
+    /// Performs BN254 G1 scalar multiplication.
+    /// </summary>
+    /// <param name="point">The input point <c>(x || y)</c>.</param>
+    /// <param name="scalar">The scalar.</param>
+    /// <param name="result">The resulting point <c>(x || y)</c>.</param>
+    /// <exception cref="ArgumentOutOfRangeException"><c>point</c> buffer must be 64 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><c>scalar</c> buffer must be 32 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><c>result</c> buffer must be 64 bytes long.</exception>
+    /// <exception cref="CryptographicException">Operation failed.</exception>
+    public static void BN254G1Mul(
+        ReadOnlySpan<byte> point,
+        ReadOnlySpan<byte> scalar,
+        Span<byte> result)
+    {
+        ArgumentOutOfRangeException.ThrowIfNotEqual(point.Length, 64, nameof(point));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(scalar.Length, 32, nameof(scalar));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(result.Length, 64, nameof(result));
+
+        zkvm_status status = zkvm_bn254_g1_mul(point, scalar, result);
+
+        ThrowIfFailed(status, nameof(zkvm_bn254_g1_mul));
+    }
+
+    /// <summary>
+    /// Checks if the pairing equation holds for the given points.
+    /// </summary>
+    /// <param name="pairs">The array of G1-G2 point pairs.</param>
+    /// <param name="numPairs">The number of point pairs.</param>
+    /// <returns><c>true</c> if the pairing equation holds; otherwise, <c>false</c>.</returns>
+    /// <exception cref="ArgumentOutOfRangeException"><c>pair</c> buffer length is invalid.</exception>
+    /// <exception cref="CryptographicException">Operation failed.</exception>
+    public static bool BN254Pairing(ReadOnlySpan<byte> pairs, nuint numPairs)
+    {
+        ArgumentOutOfRangeException.ThrowIfNotEqual((uint)pairs.Length, 192 * numPairs, nameof(pairs));
+
+        var verified = false;
+
+        zkvm_status status = zkvm_bn254_pairing(pairs, numPairs, ref verified);
+
+        ThrowIfFailed(status, nameof(zkvm_bn254_pairing));
+
+        return verified;
+    }
+
+    /// <summary>
     /// Computes the hash of data using the Keccak-256 algorithm.
     /// </summary>
     /// <param name="data">The data to hash.</param>
@@ -55,7 +124,7 @@ public static partial class Accelerators
             output
         );
 
-        ThrowIfFailed(status, nameof(zkvm_keccak256));
+        ThrowIfFailed(status, nameof(zkvm_modexp));
     }
 
     /// <summary>

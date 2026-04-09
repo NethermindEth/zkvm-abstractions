@@ -16,6 +16,27 @@ public static partial class Accelerators
     }
 
     [LibraryImport("__Internal")]
+    private static partial zkvm_status zkvm_bn254_g1_add(
+        ReadOnlySpan<byte> p1,
+        ReadOnlySpan<byte> p2,
+        Span<byte> result
+    );
+
+    [LibraryImport("__Internal")]
+    private static partial zkvm_status zkvm_bn254_g1_mul(
+        ReadOnlySpan<byte> point,
+        ReadOnlySpan<byte> scalar,
+        Span<byte> result
+    );
+
+    [LibraryImport("__Internal")]
+    private static partial zkvm_status zkvm_bn254_pairing(
+        ReadOnlySpan<byte> pairs,
+        nuint num_pairs,
+        [MarshalAs(UnmanagedType.U1)] ref bool verified
+    );
+
+    [LibraryImport("__Internal")]
     private static partial zkvm_status zkvm_keccak256(ReadOnlySpan<byte> data, nuint len, Span<byte> output);
 
     [LibraryImport("__Internal")]
