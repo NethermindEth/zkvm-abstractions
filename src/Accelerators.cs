@@ -126,6 +126,39 @@ public static partial class Accelerators
     }
 
     /// <summary>
+    /// Verifies a KZG proof for point evaluation.
+    /// </summary>
+    /// <param name="commitment">The KZG commitment.</param>
+    /// <param name="z">The evaluation point.</param>
+    /// <param name="y">The claimed evaluation.</param>
+    /// <param name="proof">The KZG proof.</param>
+    /// <returns><c>true</c> if the proof is valid; otherwise, <c>false</c>.</returns>
+    /// <exception cref="ArgumentOutOfRangeException"><c>commitment</c> buffer must be 48 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><c>z</c> buffer must be 32 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><c>y</c> buffer must be 32 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><c>proof</c> buffer must be 48 bytes long.</exception>
+    /// <exception cref="CryptographicException">Operation failed.</exception>
+    public static bool KzgPointEval(
+        ReadOnlySpan<byte> commitment,
+        ReadOnlySpan<byte> z,
+        ReadOnlySpan<byte> y,
+        ReadOnlySpan<byte> proof)
+    {
+        ArgumentOutOfRangeException.ThrowIfNotEqual(commitment.Length, 48, nameof(commitment));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(z.Length, 32, nameof(z));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(y.Length, 32, nameof(y));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(proof.Length, 48, nameof(proof));
+
+        var verified = false;
+
+        zkvm_status status = zkvm_kzg_point_eval(commitment, z, y, proof, ref verified);
+
+        ThrowIfFailed(status, nameof(zkvm_kzg_point_eval));
+
+        return verified;
+    }
+
+    /// <summary>
     /// Computes <c>(base^exp) % modulus</c> for arbitrary precision integers.
     /// </summary>
     /// <param name="base">The base, in bytes.</param>

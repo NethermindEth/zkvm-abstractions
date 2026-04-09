@@ -49,6 +49,15 @@ public static partial class Accelerators
     private static partial zkvm_status zkvm_keccak256(ReadOnlySpan<byte> data, nuint len, Span<byte> output);
 
     [LibraryImport("__Internal")]
+    private static partial zkvm_status zkvm_kzg_point_eval(
+        ReadOnlySpan<byte> commitment,
+        ReadOnlySpan<byte> z,
+        ReadOnlySpan<byte> y,
+        ReadOnlySpan<byte> proof,
+        [MarshalAs(UnmanagedType.U1)] ref bool verified
+    );
+
+    [LibraryImport("__Internal")]
     private static partial zkvm_status zkvm_modexp(
         ReadOnlySpan<byte> @base,
         nuint base_len,
