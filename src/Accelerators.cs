@@ -7,8 +7,7 @@ namespace Nethermind.Zkvm.Abstractions;
 
 /// <summary>
 /// Provides <see href="https://github.com/eth-act/zkvm-standards/tree/main/standards/c-interface-accelerators">
-/// zkVM cryptographic accelerators.
-/// </see>
+/// zkVM cryptographic accelerators</see>.
 /// </summary>
 public static partial class Accelerators
 {
