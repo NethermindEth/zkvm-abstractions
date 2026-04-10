@@ -46,6 +46,53 @@ public static partial class Accelerators
     );
 
     [LibraryImport("__Internal")]
+    private static partial zkvm_status zkvm_bls12_g1_add(
+        ReadOnlySpan<byte> p1,
+        ReadOnlySpan<byte> p2,
+        Span<byte> result
+    );
+
+    [LibraryImport("__Internal")]
+    private static partial zkvm_status zkvm_bls12_g1_msm(
+        ReadOnlySpan<byte> pairs,
+        nuint num_pairs,
+        Span<byte> result
+    );
+
+    [LibraryImport("__Internal")]
+    private static partial zkvm_status zkvm_bls12_g2_add(
+        ReadOnlySpan<byte> p1,
+        ReadOnlySpan<byte> p2,
+        Span<byte> result
+    );
+
+    [LibraryImport("__Internal")]
+    private static partial zkvm_status zkvm_bls12_g2_msm(
+        ReadOnlySpan<byte> pairs,
+        nuint num_pairs,
+        Span<byte> result
+    );
+
+    [LibraryImport("__Internal")]
+    private static partial zkvm_status zkvm_bls12_pairing(
+        ReadOnlySpan<byte> pairs,
+        nuint num_pairs,
+        [MarshalAs(UnmanagedType.U1)] ref bool verified
+    );
+
+    [LibraryImport("__Internal")]
+    private static partial zkvm_status zkvm_bls12_map_fp_to_g1(
+        ReadOnlySpan<byte> field_element,
+        Span<byte> result
+    );
+
+    [LibraryImport("__Internal")]
+    private static partial zkvm_status zkvm_bls12_map_fp2_to_g2(
+        ReadOnlySpan<byte> field_element,
+        Span<byte> result
+    );
+
+    [LibraryImport("__Internal")]
     private static partial zkvm_status zkvm_keccak256(ReadOnlySpan<byte> data, nuint len, Span<byte> output);
 
     [LibraryImport("__Internal")]

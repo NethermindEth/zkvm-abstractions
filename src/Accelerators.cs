@@ -13,7 +13,7 @@ namespace Nethermind.Zkvm.Abstractions;
 public static partial class Accelerators
 {
     /// <summary>
-    /// Performs the BLAKE2f compression.
+    /// Performs BLAKE2f compression.
     /// </summary>
     /// <param name="rounds">The number of rounds.</param>
     /// <param name="state">The state vector.</param>
@@ -89,7 +89,7 @@ public static partial class Accelerators
     }
 
     /// <summary>
-    /// Checks if the pairing equation holds for the given points.
+    /// Checks if the BN254 pairing equation holds for the given points.
     /// </summary>
     /// <param name="pairs">The array of G1-G2 point pairs.</param>
     /// <param name="numPairs">The number of point pairs.</param>
@@ -105,8 +105,151 @@ public static partial class Accelerators
         zkvm_status status = zkvm_bn254_pairing(pairs, numPairs, ref verified);
 
         ThrowIfFailed(status, nameof(zkvm_bn254_pairing));
+        
+        return verified;
+    }
+
+    /// <summary>
+    /// Performs BLS12-381 G1 point addition.
+    /// </summary>
+    /// <param name="p1">The first point <c>(x || y)</c>.</param>
+    /// <param name="p2">The second point <c>(x || y)</c>.</param>
+    /// <param name="result">The resulting point <c>(x || y)</c>.</param>
+    /// <exception cref="ArgumentOutOfRangeException"><c>p1</c> buffer must be 96 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><c>p2</c> buffer must be 96 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><c>result</c> buffer must be 96 bytes long.</exception>
+    /// <exception cref="CryptographicException">Operation failed.</exception>
+    public static void Bls12381G1Add(
+        ReadOnlySpan<byte> p1,
+        ReadOnlySpan<byte> p2,
+        Span<byte> result)
+    {
+        ArgumentOutOfRangeException.ThrowIfNotEqual(p1.Length, 96, nameof(p1));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(p2.Length, 96, nameof(p2));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(result.Length, 96, nameof(result));
+
+        zkvm_status status = zkvm_bls12_g1_add(p1, p2, result);
+
+        ThrowIfFailed(status, nameof(zkvm_bls12_g1_add));
+    }
+
+    /// <summary>
+    /// Performs BLS12-381 G1 multi-scalar multiplication.
+    /// </summary>
+    /// <param name="pairs">The array of point-scalar pairs.</param>
+    /// <param name="numPairs">The Number of point-scalar pairs.</param>
+    /// <param name="result">The resulting point.</param>
+    /// <exception cref="ArgumentOutOfRangeException"><c>pairs</c> buffer must be <c>128 * numPairs</c> bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><c>result</c> buffer must be 96 bytes long.</exception>
+    /// <exception cref="CryptographicException">Operation failed.</exception>
+    public static void Bls12381G1Msm(ReadOnlySpan<byte> pairs, nuint numPairs, Span<byte> result)
+    {
+        ArgumentOutOfRangeException.ThrowIfNotEqual((uint)pairs.Length, 128 * numPairs, nameof(pairs));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(result.Length, 96, nameof(result));
+
+        zkvm_status status = zkvm_bls12_g1_msm(pairs, numPairs, result);
+
+        ThrowIfFailed(status, nameof(zkvm_bls12_g1_msm));
+    }
+
+    /// <summary>
+    /// Performs BLS12-381 G2 point addition.
+    /// </summary>
+    /// <param name="p1">The first point <c>(x || y)</c>.</param>
+    /// <param name="p2">The second point <c>(x || y)</c>.</param>
+    /// <param name="result">The resulting point <c>(x || y)</c>.</param>
+    /// <exception cref="ArgumentOutOfRangeException"><c>p1</c> buffer must be 192 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><c>p2</c> buffer must be 192 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><c>result</c> buffer must be 192 bytes long.</exception>
+    /// <exception cref="CryptographicException">Operation failed.</exception>
+    public static void Bls12381G2Add(
+        ReadOnlySpan<byte> p1,
+        ReadOnlySpan<byte> p2,
+        Span<byte> result)
+    {
+        ArgumentOutOfRangeException.ThrowIfNotEqual(p1.Length, 192, nameof(p1));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(p2.Length, 192, nameof(p2));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(result.Length, 192, nameof(result));
+
+        zkvm_status status = zkvm_bls12_g2_add(p1, p2, result);
+
+        ThrowIfFailed(status, nameof(zkvm_bls12_g2_add));
+    }
+
+    /// <summary>
+    /// Performs BLS12-381 G2 multi-scalar multiplication.
+    /// </summary>
+    /// <param name="pairs">The array of point-scalar pairs.</param>
+    /// <param name="numPairs">The Number of point-scalar pairs.</param>
+    /// <param name="result">The resulting point.</param>
+    /// <exception cref="ArgumentOutOfRangeException"><c>pairs</c> buffer must be <c>224 * numPairs</c> bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><c>result</c> buffer must be 192 bytes long.</exception>
+    /// <exception cref="CryptographicException">Operation failed.</exception>
+    public static void Bls12381G2Msm(ReadOnlySpan<byte> pairs, nuint numPairs, Span<byte> result)
+    {
+        ArgumentOutOfRangeException.ThrowIfNotEqual((uint)pairs.Length, 224 * numPairs, nameof(pairs));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(result.Length, 192, nameof(result));
+
+        zkvm_status status = zkvm_bls12_g2_msm(pairs, numPairs, result);
+
+        ThrowIfFailed(status, nameof(zkvm_bls12_g2_msm));
+    }
+
+    /// <summary>
+    /// Checks if the BLS12-381 pairing equation holds for the given points.
+    /// </summary>
+    /// <param name="pairs">The array of G1-G2 point pairs.</param>
+    /// <param name="numPairs">The number of point pairs.</param>
+    /// <returns><c>true</c> if the pairing equation holds; otherwise, <c>false</c>.</returns>
+    /// <exception cref="ArgumentOutOfRangeException"><c>pairs</c> buffer must be <c>288 * numPairs</c> bytes long.</exception>
+    /// <exception cref="CryptographicException">Operation failed.</exception>
+    public static bool Bls12381Pairing(ReadOnlySpan<byte> pairs, nuint numPairs)
+    {
+        ArgumentOutOfRangeException.ThrowIfNotEqual((uint)pairs.Length, 288 * numPairs, nameof(pairs));
+
+        var verified = false;
+
+        zkvm_status status = zkvm_bls12_pairing(pairs, numPairs, ref verified);
+
+        ThrowIfFailed(status, nameof(zkvm_bls12_pairing));
 
         return verified;
+    }
+
+    /// <summary>
+    /// Maps a field element to a BLS12-381 G1 point.
+    /// </summary>
+    /// <param name="fieldElement">The Fp element.</param>
+    /// <param name="result">The resulting point <c>(x || y)</c>.</param>
+    /// <exception cref="ArgumentOutOfRangeException"><c>fieldElement</c> buffer must be 48 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><c>result</c> buffer must be 96 bytes long.</exception>
+    /// <exception cref="CryptographicException">Operation failed.</exception>
+    public static void Bls12381MapFpToG1(ReadOnlySpan<byte> fieldElement, Span<byte> result)
+    {
+        ArgumentOutOfRangeException.ThrowIfNotEqual(fieldElement.Length, 48, nameof(fieldElement));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(result.Length, 96, nameof(result));
+
+        zkvm_status status = zkvm_bls12_map_fp_to_g1(fieldElement, result);
+
+        ThrowIfFailed(status, nameof(zkvm_bls12_map_fp_to_g1));
+    }
+
+    /// <summary>
+    /// Maps a field element to a BLS12-381 G2 point.
+    /// </summary>
+    /// <param name="fieldElement">The Fp2 element.</param>
+    /// <param name="result">The resulting point <c>(x || y)</c>.</param>
+    /// <exception cref="ArgumentOutOfRangeException"><c>fieldElement</c> buffer must be 96 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><c>result</c> buffer must be 192 bytes long.</exception>
+    /// <exception cref="CryptographicException">Operation failed.</exception>
+    public static void Bls12381MapFp2ToG2(ReadOnlySpan<byte> fieldElement, Span<byte> result)
+    {
+        ArgumentOutOfRangeException.ThrowIfNotEqual(fieldElement.Length, 96, nameof(fieldElement));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(result.Length, 192, nameof(result));
+
+        zkvm_status status = zkvm_bls12_map_fp2_to_g2(fieldElement, result);
+
+        ThrowIfFailed(status, nameof(zkvm_bls12_map_fp2_to_g2));
     }
 
     /// <summary>
