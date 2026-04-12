@@ -99,9 +99,7 @@ public static partial class Accelerators
     {
         ArgumentOutOfRangeException.ThrowIfNotEqual((uint)pairs.Length, 192 * numPairs, nameof(pairs));
 
-        var verified = false;
-
-        zkvm_status status = zkvm_bn254_pairing(pairs, numPairs, ref verified);
+        zkvm_status status = zkvm_bn254_pairing(pairs, numPairs, out bool verified);
 
         ThrowIfFailed(status, nameof(zkvm_bn254_pairing));
         
@@ -206,9 +204,7 @@ public static partial class Accelerators
     {
         ArgumentOutOfRangeException.ThrowIfNotEqual((uint)pairs.Length, 288 * numPairs, nameof(pairs));
 
-        var verified = false;
-
-        zkvm_status status = zkvm_bls12_pairing(pairs, numPairs, ref verified);
+        zkvm_status status = zkvm_bls12_pairing(pairs, numPairs, out bool verified);
 
         ThrowIfFailed(status, nameof(zkvm_bls12_pairing));
 
@@ -291,9 +287,7 @@ public static partial class Accelerators
         ArgumentOutOfRangeException.ThrowIfNotEqual(y.Length, 32, nameof(y));
         ArgumentOutOfRangeException.ThrowIfNotEqual(proof.Length, 48, nameof(proof));
 
-        var verified = false;
-
-        zkvm_status status = zkvm_kzg_point_eval(commitment, z, y, proof, ref verified);
+        zkvm_status status = zkvm_kzg_point_eval(commitment, z, y, proof, out bool verified);
 
         ThrowIfFailed(status, nameof(zkvm_kzg_point_eval));
 
@@ -389,9 +383,7 @@ public static partial class Accelerators
         ArgumentOutOfRangeException.ThrowIfNotEqual(sig.Length, 64, nameof(sig));
         ArgumentOutOfRangeException.ThrowIfNotEqual(pubkey.Length, 64, nameof(pubkey));
 
-        var verified = false;
-
-        zkvm_status status = zkvm_secp256k1_verify(msg, sig, pubkey, ref verified);
+        zkvm_status status = zkvm_secp256k1_verify(msg, sig, pubkey, out bool verified);
 
         ThrowIfFailed(status, nameof(zkvm_secp256k1_verify));
 

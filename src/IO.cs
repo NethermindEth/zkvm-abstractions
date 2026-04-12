@@ -8,6 +8,8 @@ namespace Nethermind.Zkvm.Abstractions;
 /// </summary>
 public static partial class IO
 {
+    //public static void PrintLine(string value) => throw new NotImplementedException();
+
     /// <summary>
     /// Reads raw bytes from the input stream.
     /// </summary>
@@ -15,9 +17,8 @@ public static partial class IO
     public static unsafe ReadOnlySpan<byte> ReadInput()
     {
         byte* ptr = null;
-        nuint size = nuint.Zero;
 
-        read_input(&ptr, ref size);
+        read_input(&ptr, out nuint size);
 
         return size == nuint.Zero ? [] : new ReadOnlySpan<byte>(ptr, checked((int)size));
     }

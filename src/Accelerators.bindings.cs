@@ -42,7 +42,7 @@ public static partial class Accelerators
     private static partial zkvm_status zkvm_bn254_pairing(
         ReadOnlySpan<byte> pairs,
         nuint num_pairs,
-        [MarshalAs(UnmanagedType.U1)] ref bool verified
+        [MarshalAs(UnmanagedType.U1)] out bool verified
     );
 
     [LibraryImport("__Internal")]
@@ -77,7 +77,7 @@ public static partial class Accelerators
     private static partial zkvm_status zkvm_bls12_pairing(
         ReadOnlySpan<byte> pairs,
         nuint num_pairs,
-        [MarshalAs(UnmanagedType.U1)] ref bool verified
+        [MarshalAs(UnmanagedType.U1)] out bool verified
     );
 
     [LibraryImport("__Internal")]
@@ -101,7 +101,7 @@ public static partial class Accelerators
         ReadOnlySpan<byte> z,
         ReadOnlySpan<byte> y,
         ReadOnlySpan<byte> proof,
-        [MarshalAs(UnmanagedType.U1)] ref bool verified
+        [MarshalAs(UnmanagedType.U1)] out bool verified
     );
 
     [LibraryImport("__Internal")]
@@ -131,7 +131,7 @@ public static partial class Accelerators
         ReadOnlySpan<byte> msg,
         ReadOnlySpan<byte> sig,
         ReadOnlySpan<byte> pubkey,
-        [MarshalAs(UnmanagedType.U1)] ref bool verified
+        [MarshalAs(UnmanagedType.U1)] out bool verified
     );
 
     [LibraryImport("__Internal")]
