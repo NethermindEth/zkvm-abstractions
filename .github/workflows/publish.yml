@@ -1,0 +1,34 @@
+name: Publish
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      feed:
+        description: NuGet feed
+        default: Staging
+        type: choice
+        options:
+          - Staging
+          - Production
+
+jobs:
+  publish:
+    name: Publish
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'release'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v5
+
+      - name: Publish
+        working-directory: src
+        run: |
+          dotnet pack -c release Nethermind.Zkvm.Abstractions.csproj -p:Zisk=true
+          dotnet nuget push ./artifacts/package/release/*.nupkg \
+            -k ${{ github.event.inputs.feed == 'Staging' && secrets.NUGETTEST_API_KEY || secrets.NUGET_API_KEY }} \
+            -s ${{ github.event.inputs.feed == 'Staging' && 'https://apiint.nugettest.org/v3/index.json' || 'https://api.nuget.org/v3/index.json' }}
