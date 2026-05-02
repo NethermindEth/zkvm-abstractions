@@ -12,4 +12,10 @@ public static partial class IO
 
     [LibraryImport("__Internal")]
     private static partial void write_output(ReadOnlySpan<byte> output, nuint size);
+
+    // TODO: Remove when added to the zkVM standards: https://github.com/eth-act/zkvm-standards/issues/21
+#if ZISK
+    [LibraryImport("__Internal")]
+    private static unsafe partial void sys_write(uint _fd, byte* write_ptr, nuint nbytes);
+#endif
 }

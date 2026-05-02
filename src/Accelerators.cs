@@ -34,76 +34,9 @@ public static partial class Accelerators
         ArgumentOutOfRangeException.ThrowIfNotEqual(message.Length, 128, nameof(message));
         ArgumentOutOfRangeException.ThrowIfNotEqual(offset.Length, 16, nameof(offset));
 
-        zkvm_status status = zkvm_blake2f(rounds, state, message, offset, finalBlock);
+        Status status = zkvm_blake2f(rounds, state, message, offset, finalBlock);
 
         ThrowIfFailed(status, nameof(zkvm_blake2f));
-    }
-
-    /// <summary>
-    /// Performs BN254 G1 point addition.
-    /// </summary>
-    /// <param name="p1">The first point <c>(x || y)</c>.</param>
-    /// <param name="p2">The second point <c>(x || y)</c>.</param>
-    /// <param name="result">The resulting point <c>(x || y)</c>.</param>
-    /// <exception cref="ArgumentOutOfRangeException"><c>p1</c> buffer must be 64 bytes long.</exception>
-    /// <exception cref="ArgumentOutOfRangeException"><c>p2</c> buffer must be 64 bytes long.</exception>
-    /// <exception cref="ArgumentOutOfRangeException"><c>result</c> buffer must be 64 bytes long.</exception>
-    /// <exception cref="CryptographicException">Operation failed.</exception>
-    public static void BN254G1Add(
-        ReadOnlySpan<byte> p1,
-        ReadOnlySpan<byte> p2,
-        Span<byte> result)
-    {
-        ArgumentOutOfRangeException.ThrowIfNotEqual(p1.Length, 64, nameof(p1));
-        ArgumentOutOfRangeException.ThrowIfNotEqual(p2.Length, 64, nameof(p2));
-        ArgumentOutOfRangeException.ThrowIfNotEqual(result.Length, 64, nameof(result));
-
-        zkvm_status status = zkvm_bn254_g1_add(p1, p2, result);
-
-        ThrowIfFailed(status, nameof(zkvm_bn254_g1_add));
-    }
-
-    /// <summary>
-    /// Performs BN254 G1 scalar multiplication.
-    /// </summary>
-    /// <param name="point">The input point <c>(x || y)</c>.</param>
-    /// <param name="scalar">The scalar.</param>
-    /// <param name="result">The resulting point <c>(x || y)</c>.</param>
-    /// <exception cref="ArgumentOutOfRangeException"><c>point</c> buffer must be 64 bytes long.</exception>
-    /// <exception cref="ArgumentOutOfRangeException"><c>scalar</c> buffer must be 32 bytes long.</exception>
-    /// <exception cref="ArgumentOutOfRangeException"><c>result</c> buffer must be 64 bytes long.</exception>
-    /// <exception cref="CryptographicException">Operation failed.</exception>
-    public static void BN254G1Mul(
-        ReadOnlySpan<byte> point,
-        ReadOnlySpan<byte> scalar,
-        Span<byte> result)
-    {
-        ArgumentOutOfRangeException.ThrowIfNotEqual(point.Length, 64, nameof(point));
-        ArgumentOutOfRangeException.ThrowIfNotEqual(scalar.Length, 32, nameof(scalar));
-        ArgumentOutOfRangeException.ThrowIfNotEqual(result.Length, 64, nameof(result));
-
-        zkvm_status status = zkvm_bn254_g1_mul(point, scalar, result);
-
-        ThrowIfFailed(status, nameof(zkvm_bn254_g1_mul));
-    }
-
-    /// <summary>
-    /// Checks if the BN254 pairing equation holds for the given points.
-    /// </summary>
-    /// <param name="pairs">The array of G1-G2 point pairs.</param>
-    /// <param name="numPairs">The number of point pairs.</param>
-    /// <returns><c>true</c> if the pairing equation holds; otherwise, <c>false</c>.</returns>
-    /// <exception cref="ArgumentOutOfRangeException"><c>pairs</c> buffer must be <c>192 * numPairs</c> bytes long.</exception>
-    /// <exception cref="CryptographicException">Operation failed.</exception>
-    public static bool BN254Pairing(ReadOnlySpan<byte> pairs, nuint numPairs)
-    {
-        ArgumentOutOfRangeException.ThrowIfNotEqual((uint)pairs.Length, 192 * numPairs, nameof(pairs));
-
-        zkvm_status status = zkvm_bn254_pairing(pairs, numPairs, out bool verified);
-
-        ThrowIfFailed(status, nameof(zkvm_bn254_pairing));
-        
-        return verified;
     }
 
     /// <summary>
@@ -115,8 +48,7 @@ public static partial class Accelerators
     /// <exception cref="ArgumentOutOfRangeException"><c>p1</c> buffer must be 96 bytes long.</exception>
     /// <exception cref="ArgumentOutOfRangeException"><c>p2</c> buffer must be 96 bytes long.</exception>
     /// <exception cref="ArgumentOutOfRangeException"><c>result</c> buffer must be 96 bytes long.</exception>
-    /// <exception cref="CryptographicException">Operation failed.</exception>
-    public static void Bls12381G1Add(
+    public static Status Bls12381G1Add(
         ReadOnlySpan<byte> p1,
         ReadOnlySpan<byte> p2,
         Span<byte> result)
@@ -125,9 +57,7 @@ public static partial class Accelerators
         ArgumentOutOfRangeException.ThrowIfNotEqual(p2.Length, 96, nameof(p2));
         ArgumentOutOfRangeException.ThrowIfNotEqual(result.Length, 96, nameof(result));
 
-        zkvm_status status = zkvm_bls12_g1_add(p1, p2, result);
-
-        ThrowIfFailed(status, nameof(zkvm_bls12_g1_add));
+        return zkvm_bls12_g1_add(p1, p2, result);
     }
 
     /// <summary>
@@ -138,15 +68,12 @@ public static partial class Accelerators
     /// <param name="result">The resulting point.</param>
     /// <exception cref="ArgumentOutOfRangeException"><c>pairs</c> buffer must be <c>128 * numPairs</c> bytes long.</exception>
     /// <exception cref="ArgumentOutOfRangeException"><c>result</c> buffer must be 96 bytes long.</exception>
-    /// <exception cref="CryptographicException">Operation failed.</exception>
-    public static void Bls12381G1Msm(ReadOnlySpan<byte> pairs, nuint numPairs, Span<byte> result)
+    public static Status Bls12381G1Msm(ReadOnlySpan<byte> pairs, nuint numPairs, Span<byte> result)
     {
         ArgumentOutOfRangeException.ThrowIfNotEqual((uint)pairs.Length, 128 * numPairs, nameof(pairs));
         ArgumentOutOfRangeException.ThrowIfNotEqual(result.Length, 96, nameof(result));
 
-        zkvm_status status = zkvm_bls12_g1_msm(pairs, numPairs, result);
-
-        ThrowIfFailed(status, nameof(zkvm_bls12_g1_msm));
+        return zkvm_bls12_g1_msm(pairs, numPairs, result);
     }
 
     /// <summary>
@@ -158,8 +85,7 @@ public static partial class Accelerators
     /// <exception cref="ArgumentOutOfRangeException"><c>p1</c> buffer must be 192 bytes long.</exception>
     /// <exception cref="ArgumentOutOfRangeException"><c>p2</c> buffer must be 192 bytes long.</exception>
     /// <exception cref="ArgumentOutOfRangeException"><c>result</c> buffer must be 192 bytes long.</exception>
-    /// <exception cref="CryptographicException">Operation failed.</exception>
-    public static void Bls12381G2Add(
+    public static Status Bls12381G2Add(
         ReadOnlySpan<byte> p1,
         ReadOnlySpan<byte> p2,
         Span<byte> result)
@@ -168,9 +94,7 @@ public static partial class Accelerators
         ArgumentOutOfRangeException.ThrowIfNotEqual(p2.Length, 192, nameof(p2));
         ArgumentOutOfRangeException.ThrowIfNotEqual(result.Length, 192, nameof(result));
 
-        zkvm_status status = zkvm_bls12_g2_add(p1, p2, result);
-
-        ThrowIfFailed(status, nameof(zkvm_bls12_g2_add));
+        return zkvm_bls12_g2_add(p1, p2, result);
     }
 
     /// <summary>
@@ -181,15 +105,12 @@ public static partial class Accelerators
     /// <param name="result">The resulting point.</param>
     /// <exception cref="ArgumentOutOfRangeException"><c>pairs</c> buffer must be <c>224 * numPairs</c> bytes long.</exception>
     /// <exception cref="ArgumentOutOfRangeException"><c>result</c> buffer must be 192 bytes long.</exception>
-    /// <exception cref="CryptographicException">Operation failed.</exception>
-    public static void Bls12381G2Msm(ReadOnlySpan<byte> pairs, nuint numPairs, Span<byte> result)
+    public static Status Bls12381G2Msm(ReadOnlySpan<byte> pairs, nuint numPairs, Span<byte> result)
     {
         ArgumentOutOfRangeException.ThrowIfNotEqual((uint)pairs.Length, 224 * numPairs, nameof(pairs));
         ArgumentOutOfRangeException.ThrowIfNotEqual(result.Length, 192, nameof(result));
 
-        zkvm_status status = zkvm_bls12_g2_msm(pairs, numPairs, result);
-
-        ThrowIfFailed(status, nameof(zkvm_bls12_g2_msm));
+        return zkvm_bls12_g2_msm(pairs, numPairs, result);
     }
 
     /// <summary>
@@ -197,18 +118,14 @@ public static partial class Accelerators
     /// </summary>
     /// <param name="pairs">The array of G1-G2 point pairs.</param>
     /// <param name="numPairs">The number of point pairs.</param>
-    /// <returns><c>true</c> if the pairing equation holds; otherwise, <c>false</c>.</returns>
+    /// <param name="verified"><c>true</c> if the pairing equation holds; otherwise, <c>false</c>.</param>
+    /// <returns>The status of the operation.</returns>
     /// <exception cref="ArgumentOutOfRangeException"><c>pairs</c> buffer must be <c>288 * numPairs</c> bytes long.</exception>
-    /// <exception cref="CryptographicException">Operation failed.</exception>
-    public static bool Bls12381Pairing(ReadOnlySpan<byte> pairs, nuint numPairs)
+    public static Status Bls12381Pairing(ReadOnlySpan<byte> pairs, nuint numPairs, out bool verified)
     {
         ArgumentOutOfRangeException.ThrowIfNotEqual((uint)pairs.Length, 288 * numPairs, nameof(pairs));
 
-        zkvm_status status = zkvm_bls12_pairing(pairs, numPairs, out bool verified);
-
-        ThrowIfFailed(status, nameof(zkvm_bls12_pairing));
-
-        return verified;
+        return zkvm_bls12_pairing(pairs, numPairs, out verified);
     }
 
     /// <summary>
@@ -218,15 +135,12 @@ public static partial class Accelerators
     /// <param name="result">The resulting point <c>(x || y)</c>.</param>
     /// <exception cref="ArgumentOutOfRangeException"><c>fieldElement</c> buffer must be 48 bytes long.</exception>
     /// <exception cref="ArgumentOutOfRangeException"><c>result</c> buffer must be 96 bytes long.</exception>
-    /// <exception cref="CryptographicException">Operation failed.</exception>
-    public static void Bls12381MapFpToG1(ReadOnlySpan<byte> fieldElement, Span<byte> result)
+    public static Status Bls12381MapFpToG1(ReadOnlySpan<byte> fieldElement, Span<byte> result)
     {
         ArgumentOutOfRangeException.ThrowIfNotEqual(fieldElement.Length, 48, nameof(fieldElement));
         ArgumentOutOfRangeException.ThrowIfNotEqual(result.Length, 96, nameof(result));
 
-        zkvm_status status = zkvm_bls12_map_fp_to_g1(fieldElement, result);
-
-        ThrowIfFailed(status, nameof(zkvm_bls12_map_fp_to_g1));
+        return zkvm_bls12_map_fp_to_g1(fieldElement, result);
     }
 
     /// <summary>
@@ -236,15 +150,69 @@ public static partial class Accelerators
     /// <param name="result">The resulting point <c>(x || y)</c>.</param>
     /// <exception cref="ArgumentOutOfRangeException"><c>fieldElement</c> buffer must be 96 bytes long.</exception>
     /// <exception cref="ArgumentOutOfRangeException"><c>result</c> buffer must be 192 bytes long.</exception>
-    /// <exception cref="CryptographicException">Operation failed.</exception>
-    public static void Bls12381MapFp2ToG2(ReadOnlySpan<byte> fieldElement, Span<byte> result)
+    public static Status Bls12381MapFp2ToG2(ReadOnlySpan<byte> fieldElement, Span<byte> result)
     {
         ArgumentOutOfRangeException.ThrowIfNotEqual(fieldElement.Length, 96, nameof(fieldElement));
         ArgumentOutOfRangeException.ThrowIfNotEqual(result.Length, 192, nameof(result));
 
-        zkvm_status status = zkvm_bls12_map_fp2_to_g2(fieldElement, result);
+        return zkvm_bls12_map_fp2_to_g2(fieldElement, result);
+    }
 
-        ThrowIfFailed(status, nameof(zkvm_bls12_map_fp2_to_g2));
+    /// <summary>
+    /// Performs BN254 G1 point addition.
+    /// </summary>
+    /// <param name="p1">The first point <c>(x || y)</c>.</param>
+    /// <param name="p2">The second point <c>(x || y)</c>.</param>
+    /// <param name="result">The resulting point <c>(x || y)</c>.</param>
+    /// <exception cref="ArgumentOutOfRangeException"><c>p1</c> buffer must be 64 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><c>p2</c> buffer must be 64 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><c>result</c> buffer must be 64 bytes long.</exception>
+    public static Status BN254G1Add(
+        ReadOnlySpan<byte> p1,
+        ReadOnlySpan<byte> p2,
+        Span<byte> result)
+    {
+        ArgumentOutOfRangeException.ThrowIfNotEqual(p1.Length, 64, nameof(p1));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(p2.Length, 64, nameof(p2));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(result.Length, 64, nameof(result));
+
+        return zkvm_bn254_g1_add(p1, p2, result);
+    }
+
+    /// <summary>
+    /// Performs BN254 G1 scalar multiplication.
+    /// </summary>
+    /// <param name="point">The input point <c>(x || y)</c>.</param>
+    /// <param name="scalar">The scalar.</param>
+    /// <param name="result">The resulting point <c>(x || y)</c>.</param>
+    /// <exception cref="ArgumentOutOfRangeException"><c>point</c> buffer must be 64 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><c>scalar</c> buffer must be 32 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><c>result</c> buffer must be 64 bytes long.</exception>
+    public static Status BN254G1Mul(
+        ReadOnlySpan<byte> point,
+        ReadOnlySpan<byte> scalar,
+        Span<byte> result)
+    {
+        ArgumentOutOfRangeException.ThrowIfNotEqual(point.Length, 64, nameof(point));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(scalar.Length, 32, nameof(scalar));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(result.Length, 64, nameof(result));
+
+        return zkvm_bn254_g1_mul(point, scalar, result);
+    }
+
+    /// <summary>
+    /// Checks if the BN254 pairing equation holds for the given points.
+    /// </summary>
+    /// <param name="pairs">The array of G1-G2 point pairs.</param>
+    /// <param name="numPairs">The number of point pairs.</param>
+    /// <param name="verified"><c>true</c> if the pairing equation holds; otherwise, <c>false</c>.</param>
+    /// <returns>The status of the operation.</returns>
+    /// <exception cref="ArgumentOutOfRangeException"><c>pairs</c> buffer must be <c>192 * numPairs</c> bytes long.</exception>
+    public static Status BN254Pairing(ReadOnlySpan<byte> pairs, nuint numPairs, out bool verified)
+    {
+        ArgumentOutOfRangeException.ThrowIfNotEqual((uint)pairs.Length, 192 * numPairs, nameof(pairs));
+
+        return zkvm_bn254_pairing(pairs, numPairs, out verified);
     }
 
     /// <summary>
@@ -258,10 +226,24 @@ public static partial class Accelerators
     {
         ArgumentOutOfRangeException.ThrowIfNotEqual(output.Length, 32, nameof(output));
 
-        zkvm_status status = zkvm_keccak256(data, (nuint)data.Length, output);
+        Status status = zkvm_keccak256(data, (nuint)data.Length, output);
 
         ThrowIfFailed(status, nameof(zkvm_keccak256));
     }
+
+#if ZISK
+    /// <summary>
+    /// Performs the Keccak-f[1600] permutation on the given state.
+    /// </summary>
+    /// <param name="state">The state buffer.</param>
+    /// <exception cref="ArgumentOutOfRangeException">State buffer must be 25 bytes long.</exception>
+    public static void KeccakF(Span<ulong> state)
+    {
+        ArgumentOutOfRangeException.ThrowIfNotEqual(state.Length, 25, nameof(state));
+
+        syscall_keccak_f(state);
+    }
+#endif
 
     /// <summary>
     /// Verifies a KZG proof for point evaluation.
@@ -287,7 +269,7 @@ public static partial class Accelerators
         ArgumentOutOfRangeException.ThrowIfNotEqual(y.Length, 32, nameof(y));
         ArgumentOutOfRangeException.ThrowIfNotEqual(proof.Length, 48, nameof(proof));
 
-        zkvm_status status = zkvm_kzg_point_eval(commitment, z, y, proof, out bool verified);
+        Status status = zkvm_kzg_point_eval(commitment, z, y, proof, out bool verified);
 
         ThrowIfFailed(status, nameof(zkvm_kzg_point_eval));
 
@@ -311,7 +293,7 @@ public static partial class Accelerators
     {
         ArgumentOutOfRangeException.ThrowIfNotEqual(output.Length, modulus.Length, nameof(output));
 
-        zkvm_status status = zkvm_modexp(
+        Status status = zkvm_modexp(
             @base,
             (nuint)@base.Length,
             exp,
@@ -335,7 +317,7 @@ public static partial class Accelerators
     {
         ArgumentOutOfRangeException.ThrowIfNotEqual(output.Length, 32, nameof(output));
 
-        zkvm_status status = zkvm_ripemd160(data, (nuint)data.Length, output);
+        Status status = zkvm_ripemd160(data, (nuint)data.Length, output);
 
         ThrowIfFailed(status, nameof(zkvm_ripemd160));
     }
@@ -350,8 +332,7 @@ public static partial class Accelerators
     /// <exception cref="ArgumentOutOfRangeException"><c>msg</c> must be 32 bytes long.</exception>
     /// <exception cref="ArgumentOutOfRangeException"><c>sig</c> must be 64 bytes long.</exception>
     /// <exception cref="ArgumentOutOfRangeException"><c>output</c> must be 64 bytes long.</exception>
-    /// <exception cref="CryptographicException">Operation failed.</exception>
-    public static void SecP256k1ECRecover(
+    public static Status SecP256k1Recover(
         ReadOnlySpan<byte> msg,
         ReadOnlySpan<byte> sig,
         byte recid,
@@ -361,9 +342,7 @@ public static partial class Accelerators
         ArgumentOutOfRangeException.ThrowIfNotEqual(sig.Length, 64, nameof(sig));
         ArgumentOutOfRangeException.ThrowIfNotEqual(output.Length, 64, nameof(output));
 
-        zkvm_status status = zkvm_secp256k1_ecrecover(msg, sig, recid, output);
-
-        ThrowIfFailed(status, nameof(zkvm_secp256k1_ecrecover));
+        return zkvm_secp256k1_ecrecover(msg, sig, recid, output);
     }
 
     /// <summary>
@@ -383,9 +362,33 @@ public static partial class Accelerators
         ArgumentOutOfRangeException.ThrowIfNotEqual(sig.Length, 64, nameof(sig));
         ArgumentOutOfRangeException.ThrowIfNotEqual(pubkey.Length, 64, nameof(pubkey));
 
-        zkvm_status status = zkvm_secp256k1_verify(msg, sig, pubkey, out bool verified);
+        Status status = zkvm_secp256k1_verify(msg, sig, pubkey, out bool verified);
 
         ThrowIfFailed(status, nameof(zkvm_secp256k1_verify));
+
+        return verified;
+    }
+
+    /// <summary>
+    /// Verifies an ECDSA signature on the SecP256r1 curve.
+    /// </summary>
+    /// <param name="msg">The message hash.</param>
+    /// <param name="sig">The signature <c>(r || s)</c>.</param>
+    /// <param name="pubkey">The uncompressed public key <c>(x || y)</c>.</param>
+    /// <returns><c>true</c> if signature is valid; otherwise, <c>false</c>.</returns>
+    /// <exception cref="ArgumentOutOfRangeException"><c>msg</c> must be 32 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><c>sig</c> must be 64 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><c>pubkey</c> must be 64 bytes long.</exception>
+    /// <exception cref="CryptographicException">Operation failed.</exception>
+    public static bool SecP256r1Verify(ReadOnlySpan<byte> msg, ReadOnlySpan<byte> sig, ReadOnlySpan<byte> pubkey)
+    {
+        ArgumentOutOfRangeException.ThrowIfNotEqual(msg.Length, 32, nameof(msg));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(sig.Length, 64, nameof(sig));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(pubkey.Length, 64, nameof(pubkey));
+
+        Status status = zkvm_secp256r1_verify(msg, sig, pubkey, out bool verified);
+
+        ThrowIfFailed(status, nameof(zkvm_secp256r1_verify));
 
         return verified;
     }
@@ -403,14 +406,29 @@ public static partial class Accelerators
     {
         ArgumentOutOfRangeException.ThrowIfNotEqual(output.Length, 32, nameof(output));
 
-        zkvm_status status = zkvm_sha256(data, (nuint)data.Length, output);
+        Status status = zkvm_sha256(data, (nuint)data.Length, output);
 
         ThrowIfFailed(status, nameof(zkvm_sha256));
     }
 
-    private static void ThrowIfFailed(zkvm_status status, string methodName)
+    private static void ThrowIfFailed(Status status, string methodName)
     {
-        if (status != zkvm_status.ZKVM_EOK)
+        if (status != Status.OK)
             throw new CryptographicException($"{methodName} failed. Status: {status}");
+    }
+
+    /// <summary>
+    /// Represents the status of an accelerator operation.
+    /// </summary>
+    public enum Status // zkvm_status
+    {
+        /// <summary>
+        /// The operation completed successfully.
+        /// </summary>
+        OK = 0, // ZKVM_EOK
+        /// <summary>
+        /// The operation failed.
+        /// </summary>
+        Fail = -1 // ZKVM_EFAIL
     }
 }
