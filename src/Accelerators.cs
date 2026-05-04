@@ -19,9 +19,9 @@ public static partial class Accelerators
     /// <param name="message">The message block.</param>
     /// <param name="offset">The offset counters.</param>
     /// <param name="finalBlock">The final block indicator.</param>
-    /// <exception cref="ArgumentOutOfRangeException"><c>state</c> buffer must be 64 bytes long.</exception>
-    /// <exception cref="ArgumentOutOfRangeException"><c>message</c> buffer must be 128 bytes long.</exception>
-    /// <exception cref="ArgumentOutOfRangeException"><c>offset</c> buffer must be 16 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>state</c> must be 64 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>message</c> must be 128 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>offset</c> must be 16 bytes long.</exception>
     /// <exception cref="CryptographicException">Operation failed.</exception>
     public static void Blake2F(
         uint rounds,
@@ -45,9 +45,10 @@ public static partial class Accelerators
     /// <param name="p1">The first point <c>(x || y)</c>.</param>
     /// <param name="p2">The second point <c>(x || y)</c>.</param>
     /// <param name="result">The resulting point <c>(x || y)</c>.</param>
-    /// <exception cref="ArgumentOutOfRangeException"><c>p1</c> buffer must be 96 bytes long.</exception>
-    /// <exception cref="ArgumentOutOfRangeException"><c>p2</c> buffer must be 96 bytes long.</exception>
-    /// <exception cref="ArgumentOutOfRangeException"><c>result</c> buffer must be 96 bytes long.</exception>
+    /// <returns>The status of the operation.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>p1</c> must be 96 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>p2</c> must be 96 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>result</c> must be 96 bytes long.</exception>
     public static Status Bls12381G1Add(
         ReadOnlySpan<byte> p1,
         ReadOnlySpan<byte> p2,
@@ -66,8 +67,9 @@ public static partial class Accelerators
     /// <param name="pairs">The array of point-scalar pairs.</param>
     /// <param name="numPairs">The Number of point-scalar pairs.</param>
     /// <param name="result">The resulting point.</param>
-    /// <exception cref="ArgumentOutOfRangeException"><c>pairs</c> buffer must be <c>128 * numPairs</c> bytes long.</exception>
-    /// <exception cref="ArgumentOutOfRangeException"><c>result</c> buffer must be 96 bytes long.</exception>
+    /// <returns>The status of the operation.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>pairs</c> must be <c>128 * numPairs</c> bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>result</c> must be 96 bytes long.</exception>
     public static Status Bls12381G1Msm(ReadOnlySpan<byte> pairs, nuint numPairs, Span<byte> result)
     {
         ArgumentOutOfRangeException.ThrowIfNotEqual((uint)pairs.Length, 128 * numPairs, nameof(pairs));
@@ -82,9 +84,10 @@ public static partial class Accelerators
     /// <param name="p1">The first point <c>(x || y)</c>.</param>
     /// <param name="p2">The second point <c>(x || y)</c>.</param>
     /// <param name="result">The resulting point <c>(x || y)</c>.</param>
-    /// <exception cref="ArgumentOutOfRangeException"><c>p1</c> buffer must be 192 bytes long.</exception>
-    /// <exception cref="ArgumentOutOfRangeException"><c>p2</c> buffer must be 192 bytes long.</exception>
-    /// <exception cref="ArgumentOutOfRangeException"><c>result</c> buffer must be 192 bytes long.</exception>
+    /// <returns>The status of the operation.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>p1</c> must be 192 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>p2</c> must be 192 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>result</c> must be 192 bytes long.</exception>
     public static Status Bls12381G2Add(
         ReadOnlySpan<byte> p1,
         ReadOnlySpan<byte> p2,
@@ -103,8 +106,9 @@ public static partial class Accelerators
     /// <param name="pairs">The array of point-scalar pairs.</param>
     /// <param name="numPairs">The Number of point-scalar pairs.</param>
     /// <param name="result">The resulting point.</param>
-    /// <exception cref="ArgumentOutOfRangeException"><c>pairs</c> buffer must be <c>224 * numPairs</c> bytes long.</exception>
-    /// <exception cref="ArgumentOutOfRangeException"><c>result</c> buffer must be 192 bytes long.</exception>
+    /// <returns>The status of the operation.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>pairs</c> must be <c>224 * numPairs</c> bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>result</c> must be 192 bytes long.</exception>
     public static Status Bls12381G2Msm(ReadOnlySpan<byte> pairs, nuint numPairs, Span<byte> result)
     {
         ArgumentOutOfRangeException.ThrowIfNotEqual((uint)pairs.Length, 224 * numPairs, nameof(pairs));
@@ -120,7 +124,7 @@ public static partial class Accelerators
     /// <param name="numPairs">The number of point pairs.</param>
     /// <param name="verified"><c>true</c> if the pairing equation holds; otherwise, <c>false</c>.</param>
     /// <returns>The status of the operation.</returns>
-    /// <exception cref="ArgumentOutOfRangeException"><c>pairs</c> buffer must be <c>288 * numPairs</c> bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>pairs</c> must be <c>288 * numPairs</c> bytes long.</exception>
     public static Status Bls12381Pairing(ReadOnlySpan<byte> pairs, nuint numPairs, out bool verified)
     {
         ArgumentOutOfRangeException.ThrowIfNotEqual((uint)pairs.Length, 288 * numPairs, nameof(pairs));
@@ -133,8 +137,9 @@ public static partial class Accelerators
     /// </summary>
     /// <param name="fieldElement">The Fp element.</param>
     /// <param name="result">The resulting point <c>(x || y)</c>.</param>
-    /// <exception cref="ArgumentOutOfRangeException"><c>fieldElement</c> buffer must be 48 bytes long.</exception>
-    /// <exception cref="ArgumentOutOfRangeException"><c>result</c> buffer must be 96 bytes long.</exception>
+    /// <returns>The status of the operation.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>fieldElement</c> must be 48 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>result</c> must be 96 bytes long.</exception>
     public static Status Bls12381MapFpToG1(ReadOnlySpan<byte> fieldElement, Span<byte> result)
     {
         ArgumentOutOfRangeException.ThrowIfNotEqual(fieldElement.Length, 48, nameof(fieldElement));
@@ -148,8 +153,9 @@ public static partial class Accelerators
     /// </summary>
     /// <param name="fieldElement">The Fp2 element.</param>
     /// <param name="result">The resulting point <c>(x || y)</c>.</param>
-    /// <exception cref="ArgumentOutOfRangeException"><c>fieldElement</c> buffer must be 96 bytes long.</exception>
-    /// <exception cref="ArgumentOutOfRangeException"><c>result</c> buffer must be 192 bytes long.</exception>
+    /// <returns>The status of the operation.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>fieldElement</c> must be 96 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>result</c> must be 192 bytes long.</exception>
     public static Status Bls12381MapFp2ToG2(ReadOnlySpan<byte> fieldElement, Span<byte> result)
     {
         ArgumentOutOfRangeException.ThrowIfNotEqual(fieldElement.Length, 96, nameof(fieldElement));
@@ -164,9 +170,10 @@ public static partial class Accelerators
     /// <param name="p1">The first point <c>(x || y)</c>.</param>
     /// <param name="p2">The second point <c>(x || y)</c>.</param>
     /// <param name="result">The resulting point <c>(x || y)</c>.</param>
-    /// <exception cref="ArgumentOutOfRangeException"><c>p1</c> buffer must be 64 bytes long.</exception>
-    /// <exception cref="ArgumentOutOfRangeException"><c>p2</c> buffer must be 64 bytes long.</exception>
-    /// <exception cref="ArgumentOutOfRangeException"><c>result</c> buffer must be 64 bytes long.</exception>
+    /// <returns>The status of the operation.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>p1</c> must be 64 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>p2</c> must be 64 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>result</c> must be 64 bytes long.</exception>
     public static Status BN254G1Add(
         ReadOnlySpan<byte> p1,
         ReadOnlySpan<byte> p2,
@@ -185,9 +192,10 @@ public static partial class Accelerators
     /// <param name="point">The input point <c>(x || y)</c>.</param>
     /// <param name="scalar">The scalar.</param>
     /// <param name="result">The resulting point <c>(x || y)</c>.</param>
-    /// <exception cref="ArgumentOutOfRangeException"><c>point</c> buffer must be 64 bytes long.</exception>
-    /// <exception cref="ArgumentOutOfRangeException"><c>scalar</c> buffer must be 32 bytes long.</exception>
-    /// <exception cref="ArgumentOutOfRangeException"><c>result</c> buffer must be 64 bytes long.</exception>
+    /// <returns>The status of the operation.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>point</c> must be 64 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>scalar</c> must be 32 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>result</c> must be 64 bytes long.</exception>
     public static Status BN254G1Mul(
         ReadOnlySpan<byte> point,
         ReadOnlySpan<byte> scalar,
@@ -207,7 +215,7 @@ public static partial class Accelerators
     /// <param name="numPairs">The number of point pairs.</param>
     /// <param name="verified"><c>true</c> if the pairing equation holds; otherwise, <c>false</c>.</param>
     /// <returns>The status of the operation.</returns>
-    /// <exception cref="ArgumentOutOfRangeException"><c>pairs</c> buffer must be <c>192 * numPairs</c> bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>pairs</c> buffer must be <c>192 * numPairs</c> bytes long.</exception>
     public static Status BN254Pairing(ReadOnlySpan<byte> pairs, nuint numPairs, out bool verified)
     {
         ArgumentOutOfRangeException.ThrowIfNotEqual((uint)pairs.Length, 192 * numPairs, nameof(pairs));
@@ -220,7 +228,7 @@ public static partial class Accelerators
     /// </summary>
     /// <param name="data">The data to hash.</param>
     /// <param name="output">The buffer to receive the hash value.</param>
-    /// <exception cref="ArgumentOutOfRangeException">Output buffer must be 32 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>output</c> must be 32 bytes long.</exception>
     /// <exception cref="CryptographicException">Operation failed.</exception>
     public static void Keccak256(ReadOnlySpan<byte> data, Span<byte> output)
     {
@@ -253,10 +261,10 @@ public static partial class Accelerators
     /// <param name="y">The claimed evaluation.</param>
     /// <param name="proof">The KZG proof.</param>
     /// <returns><c>true</c> if the proof is valid; otherwise, <c>false</c>.</returns>
-    /// <exception cref="ArgumentOutOfRangeException"><c>commitment</c> buffer must be 48 bytes long.</exception>
-    /// <exception cref="ArgumentOutOfRangeException"><c>z</c> buffer must be 32 bytes long.</exception>
-    /// <exception cref="ArgumentOutOfRangeException"><c>y</c> buffer must be 32 bytes long.</exception>
-    /// <exception cref="ArgumentOutOfRangeException"><c>proof</c> buffer must be 48 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>commitment</c> buffer must be 48 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>z</c> buffer must be 32 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>y</c> buffer must be 32 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>proof</c> buffer must be 48 bytes long.</exception>
     /// <exception cref="CryptographicException">Operation failed.</exception>
     public static bool KzgPointEval(
         ReadOnlySpan<byte> commitment,
@@ -283,7 +291,7 @@ public static partial class Accelerators
     /// <param name="exp">The exponent value, in bytes.</param>
     /// <param name="modulus">The modulus, in bytes.</param>
     /// <param name="output">The buffer to receive the result value.</param>
-    /// <exception cref="ArgumentOutOfRangeException">Output buffer length must be equal to <c>modulus</c> length.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>output</c> length must be equal to the <c>modulus</c> length.</exception>
     /// <exception cref="CryptographicException">Operation failed.</exception>
     public static void ModExp(
         ReadOnlySpan<byte> @base,
@@ -310,8 +318,8 @@ public static partial class Accelerators
     /// Computes the hash of data using the RIPEMD-160 algorithm.
     /// </summary>
     /// <param name="data">The data to hash.</param>
-    /// <param name="output">The buffer to receive the hash value.</param>
-    /// <exception cref="ArgumentOutOfRangeException">Output buffer must be 32 bytes long.</exception>
+    /// <param name="output">The buffer to receive the hash value (20-byte hash, right-aligned in a 32-byte buffer).</param>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>output</c> must be 32 bytes long.</exception>
     /// <exception cref="CryptographicException">Operation failed.</exception>
     public static void Ripemd160(ReadOnlySpan<byte> data, Span<byte> output)
     {
@@ -329,9 +337,10 @@ public static partial class Accelerators
     /// <param name="sig">The signature <c>(r || s)</c>.</param>
     /// <param name="recid">The recovery id.</param>
     /// <param name="output">The buffer to receive the public key.</param>
-    /// <exception cref="ArgumentOutOfRangeException"><c>msg</c> must be 32 bytes long.</exception>
-    /// <exception cref="ArgumentOutOfRangeException"><c>sig</c> must be 64 bytes long.</exception>
-    /// <exception cref="ArgumentOutOfRangeException"><c>output</c> must be 64 bytes long.</exception>
+    /// <returns>The status of the operation.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>msg</c> must be 32 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>sig</c> must be 64 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>output</c> must be 64 bytes long.</exception>
     public static Status SecP256k1Recover(
         ReadOnlySpan<byte> msg,
         ReadOnlySpan<byte> sig,
@@ -352,9 +361,9 @@ public static partial class Accelerators
     /// <param name="sig">The signature <c>(r || s)</c>.</param>
     /// <param name="pubkey">The uncompressed public key <c>(x || y)</c>.</param>
     /// <returns><c>true</c> if signature is valid; otherwise, <c>false</c>.</returns>
-    /// <exception cref="ArgumentOutOfRangeException"><c>msg</c> must be 32 bytes long.</exception>
-    /// <exception cref="ArgumentOutOfRangeException"><c>sig</c> must be 64 bytes long.</exception>
-    /// <exception cref="ArgumentOutOfRangeException"><c>pubkey</c> must be 64 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>msg</c> must be 32 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>sig</c> must be 64 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>pubkey</c> must be 64 bytes long.</exception>
     /// <exception cref="CryptographicException">Operation failed.</exception>
     public static bool SecP256k1Verify(ReadOnlySpan<byte> msg, ReadOnlySpan<byte> sig, ReadOnlySpan<byte> pubkey)
     {
@@ -376,9 +385,9 @@ public static partial class Accelerators
     /// <param name="sig">The signature <c>(r || s)</c>.</param>
     /// <param name="pubkey">The uncompressed public key <c>(x || y)</c>.</param>
     /// <returns><c>true</c> if signature is valid; otherwise, <c>false</c>.</returns>
-    /// <exception cref="ArgumentOutOfRangeException"><c>msg</c> must be 32 bytes long.</exception>
-    /// <exception cref="ArgumentOutOfRangeException"><c>sig</c> must be 64 bytes long.</exception>
-    /// <exception cref="ArgumentOutOfRangeException"><c>pubkey</c> must be 64 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>msg</c> must be 32 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>sig</c> must be 64 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>pubkey</c> must be 64 bytes long.</exception>
     /// <exception cref="CryptographicException">Operation failed.</exception>
     public static bool SecP256r1Verify(ReadOnlySpan<byte> msg, ReadOnlySpan<byte> sig, ReadOnlySpan<byte> pubkey)
     {
@@ -400,7 +409,7 @@ public static partial class Accelerators
     /// <param name="output">The buffer to receive the hash value:
     /// first 20 bytes contain the hash; remaining 12 bytes are zero-filled.
     /// </param>
-    /// <exception cref="ArgumentOutOfRangeException">Output buffer must be 32 bytes long.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>output</c> must be 32 bytes long.</exception>
     /// <exception cref="CryptographicException">Operation failed.</exception>
     public static void Sha256(ReadOnlySpan<byte> data, Span<byte> output)
     {
