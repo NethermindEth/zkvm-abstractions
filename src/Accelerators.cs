@@ -420,6 +420,61 @@ public static partial class Accelerators
         ThrowIfFailed(status, nameof(zkvm_sha256));
     }
 
+#if ZISK
+    /// <summary>
+    /// Computes <c>(a + b) mod modulus</c> for 256-bit integers, with the sum taken over 257 bits.
+    /// </summary>
+    /// <param name="a">The first addend.</param>
+    /// <param name="b">The second addend.</param>
+    /// <param name="modulus">The modulus. A zero modulus gives zero.</param>
+    /// <param name="result">The buffer to receive the result.</param>
+    /// <remarks><inheritdoc cref="MulMod256" path="/remarks"/></remarks>
+    public static unsafe void AddMod256(ulong* a, ulong* b, ulong* modulus, ulong* result) =>
+        add_mod256_c(a, b, modulus, result);
+
+    /// <summary>
+    /// Computes <c>a / b</c> and <c>a mod b</c> for 256-bit integers.
+    /// </summary>
+    /// <param name="a">The dividend.</param>
+    /// <param name="b">The divisor. It must not be zero: a zero divisor aborts the guest.</param>
+    /// <param name="quotient">The buffer to receive the quotient.</param>
+    /// <param name="remainder">The buffer to receive the remainder.</param>
+    /// <remarks>
+    /// The quotient and remainder are hinted, then checked with one <c>arith256</c> precompile call:
+    /// <c>quotient * b + remainder</c> must equal <paramref name="a"/> with a zero high word, and the
+    /// remainder must be less than <paramref name="b"/>, so a prover cannot substitute another pair.
+    /// <inheritdoc cref="MulMod256" path="/remarks"/>
+    /// </remarks>
+    public static unsafe void DivRem256(ulong* a, ulong* b, ulong* quotient, ulong* remainder) =>
+        div_rem256_c(a, b, quotient, remainder);
+
+    /// <summary>
+    /// Computes <c>(a * b) mod modulus</c> for 256-bit integers, with the product taken over 512 bits.
+    /// </summary>
+    /// <param name="a">The multiplicand.</param>
+    /// <param name="b">The multiplier.</param>
+    /// <param name="modulus">The modulus. A zero modulus gives zero.</param>
+    /// <param name="result">The buffer to receive the result.</param>
+    /// <remarks>
+    /// Every argument points to a 256-bit integer stored as four 64-bit limbs, least significant first. An
+    /// output must not alias an input: ZisK takes them as Rust references, which it may assume never
+    /// overlap. These take pointers rather than spans so that they can be the targets of function pointers,
+    /// which lets a caller shared with other zkVMs use them only where ZisK installs them.
+    /// </remarks>
+    public static unsafe void MulMod256(ulong* a, ulong* b, ulong* modulus, ulong* result) =>
+        mul_mod256_c(a, b, modulus, result);
+
+    /// <summary>
+    /// Computes <c>a mod modulus</c> for 256-bit integers.
+    /// </summary>
+    /// <param name="a">The value to reduce.</param>
+    /// <param name="modulus">The modulus. A zero modulus gives zero.</param>
+    /// <param name="result">The buffer to receive the result.</param>
+    /// <remarks><inheritdoc cref="MulMod256" path="/remarks"/></remarks>
+    public static unsafe void ReduceMod256(ulong* a, ulong* modulus, ulong* result) =>
+        reduce_mod256_c(a, modulus, result);
+#endif
+
     private static void ThrowIfFailed(Status status, string methodName)
     {
         if (status != Status.OK)
