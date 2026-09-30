@@ -137,15 +137,13 @@ public static partial class Accelerators
     [LibraryImport("__Internal")]
     private static partial Status zkvm_sha256(ReadOnlySpan<byte> data, nuint len, Span<byte> output);
 
-    // TODO: Remove when added to the zkVM standards: https://github.com/eth-act/zkvm-standards/issues/23
 #if ZISK
+    // TODO: Remove when added to the zkVM standards: https://github.com/eth-act/zkvm-standards/issues/23
     [LibraryImport("__Internal")]
     private static partial void syscall_keccak_f(Span<ulong> state);
-#endif
 
     // ZisK's 256-bit arithmetic on its arith256 precompiles, which the zkVM standards do not cover. The
     // routines neither block nor call back into managed code, so the GC transition is safe to skip.
-#if ZISK
     [LibraryImport("__Internal")]
     [SuppressGCTransition]
     private static unsafe partial void add_mod256_c(ulong* a, ulong* b, ulong* modulus, ulong* result);
