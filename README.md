@@ -20,6 +20,7 @@ Building with `-p:Zisk=true` adds APIs not covered by the standards, backed by [
 
 - `Accelerators.KeccakF`: Keccak-f[1600] permutation ([eth-act/zkvm-standards#23](https://github.com/eth-act/zkvm-standards/issues/23)).
 - `Accelerators.Sha256F`: SHA-256 compression of one block.
+- `Accelerators.Memmove`: a direct call to the `memmove` precompile, skipping corelib's wrapper.
 - `Accelerators.AddMod256`, `MulMod256`, `ReduceMod256` and `DivRem256`: 256-bit modular arithmetic and division.
 - `IO.PrintLine`: writes to the standard output ([eth-act/zkvm-standards#21](https://github.com/eth-act/zkvm-standards/issues/21)). Without ZisK, it throws `NotImplementedException`.
 

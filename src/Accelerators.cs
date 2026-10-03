@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 
 namespace Nethermind.Zkvm.Abstractions;
@@ -454,6 +455,24 @@ public static partial class Accelerators
     /// the caller guarantees 25 lanes are addressable from <paramref name="state"/>.
     /// </remarks>
     public static void KeccakF(ref ulong state) => syscall_keccak_f(ref state);
+
+    /// <summary>
+    /// Copies <paramref name="source"/> to the start of <paramref name="destination"/>; the two may overlap.
+    /// </summary>
+    /// <param name="source">The bytes to copy.</param>
+    /// <param name="destination">The buffer to receive them.</param>
+    /// <remarks>
+    /// Calls ZisK's <c>memmove</c> precompile directly. Corelib's span copy reaches the same routine for longer runs,
+    /// but through a wrapper that spills every callee-saved register.
+    /// </remarks>
+    /// <exception cref="ArgumentOutOfRangeException">The <c>destination</c> must be at least as long as <c>source</c>.</exception>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void Memmove(ReadOnlySpan<byte> source, Span<byte> destination)
+    {
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(source.Length, destination.Length, nameof(source));
+
+        memmove(ref MemoryMarshal.GetReference(destination), in MemoryMarshal.GetReference(source), (nuint)source.Length);
+    }
 
     /// <summary>
     /// Computes <c>(a * b) mod modulus</c> for 256-bit integers, with the product taken over 512 bits.
