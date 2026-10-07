@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        zkvm: [Generic, Zisk]
+        zkvm: [Generic, Zisk, Sp1, OpenVm, Zisk+Sp1+OpenVm]
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -22,4 +22,4 @@ jobs:
 
       - name: Build
         working-directory: src
-        run: dotnet build -c release -warnaserror -p:Zisk=${{ matrix.zkvm == 'Zisk' }}
+        run: dotnet build -c release -warnaserror -p:Zisk=${{ contains(matrix.zkvm, 'Zisk') }} -p:Sp1=${{ contains(matrix.zkvm, 'Sp1') }} -p:OpenVm=${{ contains(matrix.zkvm, 'OpenVm') }}

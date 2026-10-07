@@ -202,4 +202,35 @@ public static partial class Accelerators
     [SuppressGCTransition]
     private static unsafe partial void* memset(void* s, int c, nuint n);
 #endif
+
+#if SP1
+    // SP1's SHA-256 and 256-bit modular multiplication precompiles, which the zkVM standards do not cover.
+    [LibraryImport("__Internal")]
+    [SuppressGCTransition]
+    private static unsafe partial void zkvm_sha256_extend(ulong* w);
+
+    [LibraryImport("__Internal")]
+    [SuppressGCTransition]
+    private static unsafe partial void zkvm_sha256_compress(ulong* w, ulong* state);
+
+    [LibraryImport("__Internal")]
+    [SuppressGCTransition]
+    private static unsafe partial void zkvm_uint256_mulmod(ulong* x, ulong* y);
+#endif
+
+#if OPENVM
+    // OpenVM's bigint, Keccak and SHA-2 extensions, which the zkVM standards do not cover.
+    [LibraryImport("__Internal")]
+    [SuppressGCTransition]
+    private static unsafe partial void zkvm_u256_mul(ulong* result, ulong* a, ulong* b);
+
+    [LibraryImport("__Internal")]
+    [SuppressGCTransition]
+    private static unsafe partial void zkvm_keccak_xorin(ulong* buffer, byte* input, nuint len);
+
+    // Same symbol as SP1's, with OpenVM's arguments.
+    [LibraryImport("__Internal")]
+    [SuppressGCTransition]
+    private static unsafe partial void zkvm_sha256_compress(ulong* state, ulong* input, ulong* output);
+#endif
 }

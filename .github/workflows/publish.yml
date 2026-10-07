@@ -42,6 +42,6 @@ jobs:
       - name: Publish
         working-directory: src
         run: |
-          dotnet pack -c release Nethermind.Zkvm.Abstractions.csproj -p:Zisk=true
+          dotnet pack -c release Nethermind.Zkvm.Abstractions.csproj -p:Zisk=true -p:Sp1=true -p:OpenVm=true
           dotnet nuget push ./artifacts/package/release/*.nupkg \
             -k "${{ steps.login.outputs.NUGET_API_KEY }}" -s ${{ env.NUGET_SOURCE }}

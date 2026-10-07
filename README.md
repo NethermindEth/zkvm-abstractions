@@ -26,7 +26,26 @@ Building with `-p:Zisk=true` adds APIs not covered by the standards, backed by [
 
 The pointer- and `ref`-based methods are unchecked for hot paths; the caller guarantees the buffer sizes, alignment and non-aliasing described in their docs. `DivRem256` never returns if the divisor is zero.
 
-The published package is built with ZisK support, so these APIs are visible to every consumer but work only on ZisK.
+## SP1
+
+Building with `-p:Sp1=true` adds unchecked APIs backed by [SP1](https://github.com/succinctlabs/sp1) precompiles:
+
+- `Accelerators.Sha256Extend` and `Sp1Sha256Compress`: SHA-256 message schedule extension and compression of one block.
+- `Accelerators.UInt256MulMod`: in-place 256-bit modular multiplication.
+
+## OpenVM
+
+Building with `-p:OpenVm=true` adds unchecked APIs backed by [OpenVM](https://github.com/openvm-org/openvm) extensions:
+
+- `Accelerators.UInt256Mul`: 256-bit wrapping multiplication on the bigint extension.
+- `Accelerators.KeccakXorin`: XORs up to one rate of input into a Keccak state.
+- `Accelerators.OpenVmSha256Compress`: SHA-256 compression of one block.
+
+SP1 and OpenVM both export `zkvm_sha256_compress`, with different arguments: `Sp1Sha256Compress` and `OpenVmSha256Compress` each link on both zkVMs but work only on their own.
+
+## Packaging
+
+The published package is built with ZisK, SP1 and OpenVM support, so these APIs are visible to every consumer but work only on their zkVM. A guest links only the imports its code reaches, so one that never calls another zkVM's API links fine.
 
 ## License
 
