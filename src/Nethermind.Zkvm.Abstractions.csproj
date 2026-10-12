@@ -5,7 +5,7 @@
     <IsAotCompatible>true</IsAotCompatible>
     <DefineConstants Condition="'$(Zisk)' == 'true'">$(DefineConstants);ZISK</DefineConstants>
     <DefineConstants Condition="'$(Sp1)' == 'true'">$(DefineConstants);SP1</DefineConstants>
-    <DefineConstants Condition="'$(OpenVm)' == 'true'">$(DefineConstants);OPENVM</DefineConstants>
+    <DefineConstants Condition="'$(OpenVM)' == 'true'">$(DefineConstants);OPENVM</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup>

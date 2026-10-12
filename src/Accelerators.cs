@@ -663,7 +663,7 @@ public static partial class Accelerators
     /// up to the caller.
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe void OpenVmSha256Compress(ulong* state, ulong* input, ulong* output) => zkvm_sha256_compress(state, input, output);
+    public static unsafe void OpenVMSha256Compress(ulong* state, ulong* input, ulong* output) => zkvm_sha256_compress(state, input, output);
 
     /// <summary>
     /// Computes the full 512-bit product <c>x * y</c>.

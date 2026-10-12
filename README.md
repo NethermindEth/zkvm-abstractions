@@ -35,14 +35,14 @@ Building with `-p:Sp1=true` adds unchecked APIs backed by [SP1](https://github.c
 
 ## OpenVM
 
-Building with `-p:OpenVm=true` adds unchecked APIs backed by [OpenVM](https://github.com/openvm-org/openvm) extensions:
+Building with `-p:OpenVM=true` adds unchecked APIs backed by [OpenVM](https://github.com/openvm-org/openvm) extensions:
 
 - `Accelerators.UInt256Mul`: 256-bit wrapping multiplication on the bigint extension.
 - `Accelerators.KeccakXorin`: XORs up to one rate of input into a Keccak state.
-- `Accelerators.OpenVmSha256Compress`: SHA-256 compression of one block.
+- `Accelerators.OpenVMSha256Compress`: SHA-256 compression of one block.
 - `Accelerators.UInt256MulWide`, `UInt512DivRemHint` and `UInt512IsDivRem`: a 512-bit product, a quotient and remainder hinted by the runner, and the check that pins them. The hint is a phantom instruction that only the [bflat-openvm](https://github.com/NethermindEth/bflat-openvm) runner registers.
 
-SP1 and OpenVM both export `zkvm_sha256_compress`, with different arguments: `Sp1Sha256Compress` and `OpenVmSha256Compress` each link on both zkVMs but work only on their own.
+SP1 and OpenVM both export `zkvm_sha256_compress`, with different arguments: `Sp1Sha256Compress` and `OpenVMSha256Compress` each link on both zkVMs but work only on their own.
 
 ## Packaging
 

@@ -21,7 +21,7 @@ C# bindings for the [zkVM Standards for Ethereum](https://github.com/eth-act/zkv
 - Mark accelerator imports with `[SuppressGCTransition]`; guest programs are single-threaded and native routines never call back into managed code.
 - Document all public API with XML comments, linking to the relevant standard.
 - Guard non-standard APIs with `#if ZISK`, `#if SP1` or `#if OPENVM`, with a `TODO` linking the upstream standards issue where one exists; remove them once standardized.
-- Build with each of `-p:Zisk=true`, `-p:Sp1=true` and `-p:OpenVm=true` alone, none, and all together before committing; each must be free of warnings.
+- Build with each of `-p:Zisk=true`, `-p:Sp1=true` and `-p:OpenVM=true` alone, none, and all together before committing; each must be free of warnings.
 - Keep the public API Native AOT compatible.
 - Prefer the latest versions of GitHub Actions and runners.
 - Keep [AGENTS.md](./AGENTS.md) and [README.md](./README.md) in sync with the ongoing development.
