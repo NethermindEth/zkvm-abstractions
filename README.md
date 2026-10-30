@@ -19,7 +19,7 @@ Span-based methods validate buffer lengths before the native call and throw `Arg
 Building with `-p:Zisk=true` adds APIs not covered by the standards, backed by [ZisK](https://github.com/0xPolygonHermez/zisk)-specific functions:
 
 - `Accelerators.KeccakF`: Keccak-f[1600] permutation ([eth-act/zkvm-standards#23](https://github.com/eth-act/zkvm-standards/issues/23)).
-- `Accelerators.Sha256F`: SHA-256 compression of one block, also through a reusable `Sha256FParameters` block.
+- `Accelerators.Sha256F`: SHA-256 compression of one block.
 - `Accelerators.Memmove` and `Memset`: direct calls to the `memmove` and `memset` precompiles, skipping corelib's wrapper.
 - `Accelerators.AddMod256`, `MulMod256`, `ReduceMod256` and `DivRem256`: 256-bit modular arithmetic and division.
 - `Accelerators.Arith256` and `Arith256Mod`: the `arith256` and `arith256_mod` precompiles themselves, `a * b + c` and `(a * b + c) mod m`, also through reusable `Arith256Parameters` and `Arith256ModParameters` blocks.
