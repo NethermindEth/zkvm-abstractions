@@ -19,9 +19,10 @@ public static partial class Accelerators
     [SuppressGCTransition]
     private static partial void syscall_keccak_f(ref ulong state);
 
+    // Since ZisK v1.4.0 the precompile takes the state and the input directly, with no parameter block.
     [LibraryImport("__Internal")]
     [SuppressGCTransition]
-    private static unsafe partial void syscall_sha256_f(Sha256FParameters* parameters);
+    private static unsafe partial void syscall_sha256_f(ulong* state, ulong* input);
 
     // ZisK's 256-bit arithmetic precompiles themselves. Each takes the address of its operand block, which a JIT
     // that lists the import in JitZkCsrPInvokes emits as the CSR write rather than a call.

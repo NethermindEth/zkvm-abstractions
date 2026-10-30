@@ -263,24 +263,7 @@ public static partial class Accelerators
     /// runs it twice per node.
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe void Sha256F(ulong* state, ulong* block)
-    {
-        Sha256FParameters parameters = new() { State = state, Block = block };
-
-        syscall_sha256_f(&parameters);
-    }
-
-    /// <summary>
-    /// Performs the SHA-256 compression function on the state and block a parameter block points to.
-    /// </summary>
-    /// <param name="parameters">The parameter block. It is only read, so a caller may reuse it across calls.</param>
-    /// <remarks>
-    /// The contract of <see cref="Sha256F(ulong*, ulong*)"/> applies to the pointers in <paramref name="parameters"/>.
-    /// For callers that compress several blocks into one state: they keep one parameter block and rewrite only
-    /// <see cref="Sha256FParameters.Block"/> between calls, rather than have each call fill a fresh one.
-    /// </remarks>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe void Sha256F(Sha256FParameters* parameters) => syscall_sha256_f(parameters);
+    public static unsafe void Sha256F(ulong* state, ulong* block) => syscall_sha256_f(state, block);
 
     /// <summary>
     /// The operand block ZisK's <c>arith256</c> precompile reads through its single pointer argument.
@@ -324,19 +307,6 @@ public static partial class Accelerators
 
         /// <summary>The buffer that receives the result.</summary>
         public ulong* Result;
-    }
-
-    /// <summary>
-    /// The operand block ZisK's SHA-256 compression precompile reads through its single pointer argument.
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    public unsafe struct Sha256FParameters
-    {
-        /// <summary>The state, as described on <see cref="Sha256F(ulong*, ulong*)"/>.</summary>
-        public ulong* State;
-
-        /// <summary>The message block, as described on <see cref="Sha256F(ulong*, ulong*)"/>.</summary>
-        public ulong* Block;
     }
 }
 #endif
