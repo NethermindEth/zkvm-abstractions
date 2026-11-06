@@ -24,6 +24,8 @@ Building with `-p:Zisk=true` adds APIs not covered by the standards, backed by [
 - `Accelerators.AddMod256`, `MulMod256`, `ReduceMod256` and `DivRem256`: 256-bit modular arithmetic and division.
 - `Accelerators.Arith256` and `Arith256Mod`: the `arith256` and `arith256_mod` precompiles themselves, `a * b + c` and `(a * b + c) mod m`, also through reusable `Arith256Parameters` and `Arith256ModParameters` blocks.
 - `Accelerators.JumpDestBitmap`: the EVM JUMPDEST bitmap precompile.
+- `Accelerators.Div256`: 256-bit division on ZisK 1.4's little-endian U256 library routine.
+- `Accelerators.ZiskKeccak256`, `ZiskSecP256k1Recover`, `ZiskKzgPointEval`, `ZiskBN254*` and `ZiskBls12381*`: the standard accelerators of the same names on ZisK 1.4's own library routines, through the runtime's `zisklib_*` call thunks. `ZiskKeccak256` is unchecked, with pointers.
 - `IO.PrintLine`: writes to the standard output ([eth-act/zkvm-standards#21](https://github.com/eth-act/zkvm-standards/issues/21)). Without ZisK, it throws `NotImplementedException`.
 
 The pointer- and `ref`-based methods are unchecked for hot paths; the caller guarantees the buffer sizes, alignment and non-aliasing described in their docs. `DivRem256` never returns if the divisor is zero.

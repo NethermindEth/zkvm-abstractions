@@ -69,5 +69,113 @@ public static partial class Accelerators
     [LibraryImport("__Internal")]
     [SuppressGCTransition]
     private static unsafe partial int memcmp(void* s1, void* s2, nuint n);
+
+    // ZisK 1.4's own library routines (definitions/src/zkvmcall.rs), each a call thunk in the runtime that the
+    // transpiler turns into a jump to the routine. The zisklib_ ones take the C ABI of the standard zkvm_ imports
+    // and are named apart from them, as the ZisK Rust crate still exports those.
+    [LibraryImport("__Internal")]
+    [SuppressGCTransition]
+    private static unsafe partial Status zkvm_u256_le_div(ulong* a, ulong* b, ulong* q);
+
+    [LibraryImport("__Internal")]
+    [SuppressGCTransition]
+    private static unsafe partial Status zisklib_keccak256(byte* data, nuint len, byte* output);
+
+    [LibraryImport("__Internal")]
+    [SuppressGCTransition]
+    private static partial Status zisklib_secp256k1_ecrecover(
+        ReadOnlySpan<byte> msg,
+        ReadOnlySpan<byte> sig,
+        byte recid,
+        Span<byte> output
+    );
+
+    [LibraryImport("__Internal")]
+    [SuppressGCTransition]
+    private static partial Status zisklib_bn254_g1_add(
+        ReadOnlySpan<byte> p1,
+        ReadOnlySpan<byte> p2,
+        Span<byte> result
+    );
+
+    [LibraryImport("__Internal")]
+    [SuppressGCTransition]
+    private static partial Status zisklib_bn254_g1_mul(
+        ReadOnlySpan<byte> point,
+        ReadOnlySpan<byte> scalar,
+        Span<byte> result
+    );
+
+    [LibraryImport("__Internal")]
+    [SuppressGCTransition]
+    private static partial Status zisklib_bn254_pairing(
+        ReadOnlySpan<byte> pairs,
+        nuint num_pairs,
+        [MarshalAs(UnmanagedType.U1)] out bool verified
+    );
+
+    [LibraryImport("__Internal")]
+    [SuppressGCTransition]
+    private static partial Status zisklib_kzg_point_eval(
+        ReadOnlySpan<byte> commitment,
+        ReadOnlySpan<byte> z,
+        ReadOnlySpan<byte> y,
+        ReadOnlySpan<byte> proof,
+        [MarshalAs(UnmanagedType.U1)] out bool verified
+    );
+
+    [LibraryImport("__Internal")]
+    [SuppressGCTransition]
+    private static partial Status zisklib_bls12_g1_add(
+        ReadOnlySpan<byte> p1,
+        ReadOnlySpan<byte> p2,
+        Span<byte> result
+    );
+
+    [LibraryImport("__Internal")]
+    [SuppressGCTransition]
+    private static partial Status zisklib_bls12_g1_msm(
+        ReadOnlySpan<byte> pairs,
+        nuint num_pairs,
+        Span<byte> result
+    );
+
+    [LibraryImport("__Internal")]
+    [SuppressGCTransition]
+    private static partial Status zisklib_bls12_g2_add(
+        ReadOnlySpan<byte> p1,
+        ReadOnlySpan<byte> p2,
+        Span<byte> result
+    );
+
+    [LibraryImport("__Internal")]
+    [SuppressGCTransition]
+    private static partial Status zisklib_bls12_g2_msm(
+        ReadOnlySpan<byte> pairs,
+        nuint num_pairs,
+        Span<byte> result
+    );
+
+    [LibraryImport("__Internal")]
+    [SuppressGCTransition]
+    private static partial Status zisklib_bls12_pairing(
+        ReadOnlySpan<byte> pairs,
+        nuint num_pairs,
+        [MarshalAs(UnmanagedType.U1)] out bool verified
+    );
+
+    [LibraryImport("__Internal")]
+    [SuppressGCTransition]
+    private static partial Status zisklib_bls12_map_fp_to_g1(
+        ReadOnlySpan<byte> field_element,
+        Span<byte> result
+    );
+
+    [LibraryImport("__Internal")]
+    [SuppressGCTransition]
+    private static partial Status zisklib_bls12_map_fp2_to_g2(
+        ReadOnlySpan<byte> field_element,
+        Span<byte> result
+    );
 }
 #endif

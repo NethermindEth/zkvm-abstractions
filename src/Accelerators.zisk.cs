@@ -266,6 +266,172 @@ public static partial class Accelerators
     public static unsafe void Sha256F(ulong* state, ulong* block) => syscall_sha256_f(state, block);
 
     /// <summary>
+    /// Computes <c>a / b</c> for 256-bit integers.
+    /// </summary>
+    /// <param name="a">The dividend.</param>
+    /// <param name="b">The divisor. A zero divisor gives zero.</param>
+    /// <param name="quotient">The buffer to receive the quotient. It may alias an operand.</param>
+    /// <remarks>
+    /// Calls ZisK's little-endian U256 library routine (<c>ziskasm/lang/c/include/zkvm_u256_le.h</c>), which reads both
+    /// operands before it writes the quotient. Every argument points to four 64-bit limbs, least significant first.
+    /// </remarks>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static unsafe void Div256(ulong* a, ulong* b, ulong* quotient) => zkvm_u256_le_div(a, b, quotient);
+
+    /// <summary>
+    /// Computes the Keccak-256 hash of <paramref name="length"/> bytes at <paramref name="data"/> into the 32 bytes at
+    /// <paramref name="output"/>.
+    /// </summary>
+    /// <param name="data">The data to hash.</param>
+    /// <param name="length">The number of bytes to hash.</param>
+    /// <param name="output">The buffer to receive the hash value.</param>
+    /// <remarks>
+    /// Runs ZisK's own sponge library routine, which always succeeds. Unchecked counterpart of
+    /// <see cref="Keccak256(ReadOnlySpan{byte}, Span{byte})"/> for hot paths, with the caller's contract of
+    /// <see cref="Memmove(void*, void*, nuint)"/>.
+    /// </remarks>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static unsafe void ZiskKeccak256(byte* data, nuint length, byte* output) =>
+        zisklib_keccak256(data, length, output);
+
+    /// <inheritdoc cref="SecP256k1Recover"/>
+    /// <remarks>Runs ZisK's own recovery library routine.</remarks>
+    public static Status ZiskSecP256k1Recover(
+        ReadOnlySpan<byte> msg,
+        ReadOnlySpan<byte> sig,
+        byte recid,
+        Span<byte> output)
+    {
+        ArgumentOutOfRangeException.ThrowIfNotEqual(msg.Length, 32, nameof(msg));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(sig.Length, 64, nameof(sig));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(output.Length, 64, nameof(output));
+
+        return zisklib_secp256k1_ecrecover(msg, sig, recid, output);
+    }
+
+    /// <inheritdoc cref="BN254G1Add"/>
+    /// <remarks>Runs ZisK's own BN254 library routine.</remarks>
+    public static Status ZiskBN254G1Add(ReadOnlySpan<byte> p1, ReadOnlySpan<byte> p2, Span<byte> result)
+    {
+        ArgumentOutOfRangeException.ThrowIfNotEqual(p1.Length, 64, nameof(p1));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(p2.Length, 64, nameof(p2));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(result.Length, 64, nameof(result));
+
+        return zisklib_bn254_g1_add(p1, p2, result);
+    }
+
+    /// <inheritdoc cref="BN254G1Mul"/>
+    /// <remarks>Runs ZisK's own BN254 library routine.</remarks>
+    public static Status ZiskBN254G1Mul(ReadOnlySpan<byte> point, ReadOnlySpan<byte> scalar, Span<byte> result)
+    {
+        ArgumentOutOfRangeException.ThrowIfNotEqual(point.Length, 64, nameof(point));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(scalar.Length, 32, nameof(scalar));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(result.Length, 64, nameof(result));
+
+        return zisklib_bn254_g1_mul(point, scalar, result);
+    }
+
+    /// <inheritdoc cref="BN254Pairing"/>
+    /// <remarks>Runs ZisK's own BN254 library routine.</remarks>
+    public static Status ZiskBN254Pairing(ReadOnlySpan<byte> pairs, nuint numPairs, out bool verified)
+    {
+        ArgumentOutOfRangeException.ThrowIfNotEqual((uint)pairs.Length, 192 * numPairs, nameof(pairs));
+
+        return zisklib_bn254_pairing(pairs, numPairs, out verified);
+    }
+
+    /// <inheritdoc cref="KzgPointEval"/>
+    /// <remarks>Runs ZisK's own KZG library routine.</remarks>
+    public static bool ZiskKzgPointEval(
+        ReadOnlySpan<byte> commitment,
+        ReadOnlySpan<byte> z,
+        ReadOnlySpan<byte> y,
+        ReadOnlySpan<byte> proof)
+    {
+        ArgumentOutOfRangeException.ThrowIfNotEqual(commitment.Length, 48, nameof(commitment));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(z.Length, 32, nameof(z));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(y.Length, 32, nameof(y));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(proof.Length, 48, nameof(proof));
+
+        Status status = zisklib_kzg_point_eval(commitment, z, y, proof, out bool verified);
+
+        ThrowIfFailed(status, nameof(zisklib_kzg_point_eval));
+
+        return verified;
+    }
+
+    /// <inheritdoc cref="Bls12381G1Add"/>
+    /// <remarks>Runs ZisK's own BLS12-381 library routine.</remarks>
+    public static Status ZiskBls12381G1Add(ReadOnlySpan<byte> p1, ReadOnlySpan<byte> p2, Span<byte> result)
+    {
+        ArgumentOutOfRangeException.ThrowIfNotEqual(p1.Length, 96, nameof(p1));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(p2.Length, 96, nameof(p2));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(result.Length, 96, nameof(result));
+
+        return zisklib_bls12_g1_add(p1, p2, result);
+    }
+
+    /// <inheritdoc cref="Bls12381G1Msm"/>
+    /// <remarks>Runs ZisK's own BLS12-381 library routine.</remarks>
+    public static Status ZiskBls12381G1Msm(ReadOnlySpan<byte> pairs, nuint numPairs, Span<byte> result)
+    {
+        ArgumentOutOfRangeException.ThrowIfNotEqual((uint)pairs.Length, 128 * numPairs, nameof(pairs));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(result.Length, 96, nameof(result));
+
+        return zisklib_bls12_g1_msm(pairs, numPairs, result);
+    }
+
+    /// <inheritdoc cref="Bls12381G2Add"/>
+    /// <remarks>Runs ZisK's own BLS12-381 library routine.</remarks>
+    public static Status ZiskBls12381G2Add(ReadOnlySpan<byte> p1, ReadOnlySpan<byte> p2, Span<byte> result)
+    {
+        ArgumentOutOfRangeException.ThrowIfNotEqual(p1.Length, 192, nameof(p1));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(p2.Length, 192, nameof(p2));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(result.Length, 192, nameof(result));
+
+        return zisklib_bls12_g2_add(p1, p2, result);
+    }
+
+    /// <inheritdoc cref="Bls12381G2Msm"/>
+    /// <remarks>Runs ZisK's own BLS12-381 library routine.</remarks>
+    public static Status ZiskBls12381G2Msm(ReadOnlySpan<byte> pairs, nuint numPairs, Span<byte> result)
+    {
+        ArgumentOutOfRangeException.ThrowIfNotEqual((uint)pairs.Length, 224 * numPairs, nameof(pairs));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(result.Length, 192, nameof(result));
+
+        return zisklib_bls12_g2_msm(pairs, numPairs, result);
+    }
+
+    /// <inheritdoc cref="Bls12381Pairing"/>
+    /// <remarks>Runs ZisK's own BLS12-381 library routine.</remarks>
+    public static Status ZiskBls12381Pairing(ReadOnlySpan<byte> pairs, nuint numPairs, out bool verified)
+    {
+        ArgumentOutOfRangeException.ThrowIfNotEqual((uint)pairs.Length, 288 * numPairs, nameof(pairs));
+
+        return zisklib_bls12_pairing(pairs, numPairs, out verified);
+    }
+
+    /// <inheritdoc cref="Bls12381MapFpToG1"/>
+    /// <remarks>Runs ZisK's own BLS12-381 library routine.</remarks>
+    public static Status ZiskBls12381MapFpToG1(ReadOnlySpan<byte> fieldElement, Span<byte> result)
+    {
+        ArgumentOutOfRangeException.ThrowIfNotEqual(fieldElement.Length, 48, nameof(fieldElement));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(result.Length, 96, nameof(result));
+
+        return zisklib_bls12_map_fp_to_g1(fieldElement, result);
+    }
+
+    /// <inheritdoc cref="Bls12381MapFp2ToG2"/>
+    /// <remarks>Runs ZisK's own BLS12-381 library routine.</remarks>
+    public static Status ZiskBls12381MapFp2ToG2(ReadOnlySpan<byte> fieldElement, Span<byte> result)
+    {
+        ArgumentOutOfRangeException.ThrowIfNotEqual(fieldElement.Length, 96, nameof(fieldElement));
+        ArgumentOutOfRangeException.ThrowIfNotEqual(result.Length, 192, nameof(result));
+
+        return zisklib_bls12_map_fp2_to_g2(fieldElement, result);
+    }
+
+    /// <summary>
     /// The operand block ZisK's <c>arith256</c> precompile reads through its single pointer argument.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
